@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ok Win Prediction Tool</title>
+  <style>
+    body {
+      background: #121212;
+      color: #f1f1f1;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: none;
+      margin: 10px;
+    }
+
+    button {
+      background-color: #00aaff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+    }
+
+    .modal-content {
+      background-color: #222;
+      margin: 15% auto;
+      padding: 20px;
+      border: 2px solid #00aaff;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      color: #fff;
+      box-shadow: 0 0 15px #00aaff;
+      animation: slideDown 0.4s ease;
+    }
+
+    @keyframes slideDown {
+      from {transform: translateY(-50px); opacity: 0;}
+      to {transform: translateY(0); opacity: 1;}
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Page -->
+  <div id="loginPage">
+    <h1>Login</h1>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- Welcome Modal -->
+  <div id="welcomeModal" class="modal">
+    <div class="modal-content" style="text-align: center;">
+      <h2 style="color: #00ffcc;">Welcome!</h2>
+      <p>Enjoy your predictions.</p>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeErrorModal()">&times;</span>
+      <h2 style="color: #ff4444;">Login Failed</h2>
+      <p>Incorrect username or password. Please try again.</p>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="mainApp" class="hidden">
+    <h1>Ok Win Prediction Tool</h1>
+    <p>Enter Last 3 Digits of Period Number:</p>
+    <input type="number" id="periodInput" placeholder="e.g. 367" max="999" />
+    <br>
+    <button onclick="predict()">Predict</button>
+
+    <!-- Prediction Modal -->
+    <div id="resultModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Prediction Result</h2>
+        <p id="modalText"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+
+      const validUser = "admin";
+      const validPass = "1234";
+
+      if (user === validUser && pass === validPass) {
+        document.getElementById("welcomeModal").style.display = "block";
+
+        setTimeout(() => {
+          document.getElementById("welcomeModal").style.display = "none";
+          document.getElementById("loginPage").style.display = "none";
+          document.getElementById("mainApp").classList.remove("hidden");
+        }, 2500);
+      } else {
+        document.getElementById("errorModal").style.display = "block";
+      }
+    }
+
+    function closeErrorModal() {
+      document.getElementById("errorModal").style.display = "none";
+    }
+
+    function predict() {
+      let num = parseInt(document.getElementById("periodInput").value);
+      if (isNaN(num) || num < 0 || num > 999) {
+        alert("Please enter a number between 000 and 999.");
+        return;
+      }
+
+      let resultNum = num % 10;
+      let bigSmall = resultNum < 5 ? "Small" : resultNum > 5 ? "Big" : "Neutral";
+
+      let color = "";
+      switch (resultNum % 3) {
+        case 0: color = "Green"; break;
+        case 1: color = "Red"; break;
+        case 2: color = "Violet"; break;
+      }
+
+      let oddEven = (resultNum % 2 === 0) ? "Even" : "Odd";
+
+      let result = `
+        <strong>Color:</strong> ${color}<br>
+        <strong>Big/Small:</strong> ${bigSmall}<br>
+        <strong>Odd/Even:</strong> ${oddEven}
+      `;
+
+      document.getElementById("modalText").innerHTML = result;
+      document.getElementById("resultModal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("resultModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == document.getElementById("resultModal")) {
+        closeModal();
+      }
+      if (event.target == document.getElementById("errorModal")) {
+        closeErrorModal();
+      }
+    }
+  </script>
+</body>
+</html>  
